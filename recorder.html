@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <title>ピアニカ練習中</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style type="text/css">
+
+        .hole{
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            background-color: #ffffff;
+            border: #000000 solid 1px;
+            font-size: 36px; 
+            
+        }
+
+        .rights{
+            text-align: left;
+        }
+
+        .lefts{
+            float: right;
+        }
+       
+   </style>
+
+</head>
+
+
+
+<body>
+    <h3>ピアニカ練習中</h3>
+    <div>
+        鍵盤を指で触ってみよう<br>
+
+    </div>
+    <div class="main">
+        <div>
+            <p>
+                音量
+            </p>
+            <p>
+                <input type="range" min="0" max="5" step="0.01" value="0" id="level" 　value="1" />
+            </p>
+            <p id="leveldisp">
+                0
+            </p>
+        </div>
+        <div class="holes">
+            <div class="lefts">
+                <div id="left1" class="hole"></div>
+                <div id="left2" class="hole"></div>
+                <div id="left3" class="hole"></div>
+            </div>
+            <div class="rights">
+                <div id="right1" class="hole"></div>
+                <div id="right2" class="hole"></div>
+                <div id="right3" class="hole"></div>
+                <div id="right4" class="hole"></div>
+            </div>           
+        </div>
+        <script>
+            //ボタン表示
+        //    $(function () {
+        //        $('.pause').mouseenter(function () {
+        //            var c = $(this);
+        //            if (c.hasClass('active')) {
+        //                c.removeClass('active');
+        //            } else {
+        //                c.addClass('active');
+        //            }
+        //       })
+        //    });
+
+            let r1 = false;
+            let r2 = false;
+            let r3 = false;
+            let r4 = false;
+            let l1 = false;
+            let l2 = false;
+            let l3 = false;
+            let freq = 0;
+            let level= 0;
+
+            let osc;
+            let gain;
+            let stoptone = true;
+            
+            function onR1(){
+                r1 = true;    
+                }
+            function onR2(){
+                r2 = true;    
+                }
+            function onR3(){
+                r3 = true;    
+                }
+            function onR4(){
+                r4 = true;    
+                }
+            function onL1(){
+                l1 = true;    
+                console.log("onl1");
+                console.log("onl1=",l2)  
+                }   
+                
+            function onL2(){
+                l2 = true;    
+                console.log("onl2");
+                console.log("onl2=",l2)  
+                }
+            function onL3(){
+                l3 = true;    
+                }
+
+            function offR1(){
+                r1 = false;    
+                }
+            function offR2(){
+                r2 = false;    
+                }
+            function offR3(){
+                r3 = false;    
+                }
+            function offR4(){
+                r4 = false;    
+                }
+            function offL1(){
+                l1 = false;
+                console.log("offl1="+l1)      
+                }
+            function offL2(){
+                l2 = false;
+                console.log("offl2="+l2)    
+                }
+            function offL3(){
+                l3 = false;    
+                }
+
+            
+            function start(){
+                    if (stoptone == false){
+                        osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
+                        osc.stop(0);							// 音を止める
+                        stoptone = true;
+                        console.log("-----stop-e-----");
+                        return stoptone;
+                        }
+
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;	// for legacy browsers	
+                    let ctx = new AudioContext();
+                    ctx.createGain = ctx.createGain || ctx.createGainNode;
+                    gain = ctx.createGain()
+                    osc = ctx.createOscillator();                
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start = osc.start || osc.noteOn;   
+                    gain.gain.value = level;
+                    osc.frequency.value = freq;
+                    osc.start(0);
+                    stoptone = false;
+
+                    console.log("l1" ,l1, "l2" ,l2, "l3" ,l3, "r1" ,r1, "r2" ,r2,  "r3" ,r3, "r4" ,r4,)
+                    
+                    if(l1 && l2 && l3 && r1 && r2 && r3 && r4){
+                        freq = 261.626; //ド
+                        }else{
+                    if(l1 && l2 && l3 && r1 && r2 && r3 && r4 == false){
+                        freq = 293.665; //レ    
+                        }else{
+                    if(l1 && l2 && l3 && r1 && r2 && r3 == false && r4 == false){
+                        freq = 329.628; //ミ    
+                        }else{
+                    if(l1 && l2 && l3 && r1 && r2 == false && r3 == false && r4 == false){
+                        freq = 349.228; //ファ    
+                        }else{
+                    if(l1 && l2 && l3 && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 391.995; //ソ    
+                        }else{
+                    if(l1 && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 440.000; //ラ    
+                        }else{
+                    if(l1 && l2 == false  && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 493.883; //シ    
+                        }else{
+        　　        if(l1 == false  && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 523.251; //ド
+                        }else{                       
+                            console.log("others");
+                            freq = 0 ;
+                            
+                            if (stoptone == false){
+                                osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
+                                osc.stop(0);							// 音を止める
+                                stoptone = true;
+                                console.log("-----stop-e2-----");
+                                }
+                     
+                    } } } } } } } }
+                
+                    console.log("freqchange"+ freq);
+                    
+                    osc.frequency.value = freq;
+                    console.log("----------------");    
+                    
+                    return [osc, gain, stoptone];
+
+                }   
+
+            right1.addEventListener("touchstart", onR1)
+            right1.addEventListener("touchstart", start)
+            right2.addEventListener("touchstart", onR2)
+            right1.addEventListener("touchstart", start)
+            right3.addEventListener("touchstart", onR3)
+            right3.addEventListener("touchstart", start)
+            right4.addEventListener("touchstart", onR4)
+            right4.addEventListener("touchstart", start)
+            left1.addEventListener("touchstart", onL1)
+            left1.addEventListener("touchstart", start)
+            left2.addEventListener("touchstart", onL2)
+            left2.addEventListener("touchstart", start)
+            left3.addEventListener("touchstart", onL3)
+            left3.addEventListener("touchstart", start)
+
+                                
+            right1.addEventListener("touchend", offR1)
+            right1.addEventListener("touchend", start)
+            right2.addEventListener("touchend", offR2)
+            right2.addEventListener("touchend", start)
+            right3.addEventListener("touchend", offR3)
+            right3.addEventListener("touchend", start)
+            right4.addEventListener("touchend", offR4)
+            right4.addEventListener("touchend", start)
+            left1.addEventListener("touchend", offL1)
+            left1.addEventListener("touchend", start)
+            left2.addEventListener("touchend", offL2)
+            left2.addEventListener("touchend", start)
+            left3.addEventListener("touchend", offL3)
+            left3.addEventListener("touchend", start)
+
+
+            function updateLevel(newLevel) {
+                level = newLevel;
+                gain.gain.value = level;
+                return;
+            }          
+
+            function setupLevel() {
+                level = parseFloat(document.getElementById("level").value);
+                document.getElementById("leveldisp").innerHTML = level;
+                updateLevel(level);
+                return;
+            }
+
+            document.getElementById("level").addEventListener("input", setupLevel);
+        </script>
+
+    </div>
+    <!--
+<i class="material-icons">play_arrow</i>　
+<span class="material-icons">pause</span>
+
+
+console.log(level)
+-->
+
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <div id="footer"><br><br><br><a href="index.html">戻る</a></div>
+
+
+</body>
+
+</html>

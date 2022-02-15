@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <title>ピアニカ練習中</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style type="text/css">
+
+        .hole{
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff;
+            border: #000000 solid 1px;
+            font-size: 36px; 
+            
+        }
+
+        .rights{
+            text-align: left;
+        }
+
+        .lefts{
+            float: right;
+        }
+       
+   </style>
+
+</head>
+
+
+
+<body>
+    <h3>ピアニカ練習中</h3>
+    <div>
+        鍵盤を指で触ってみよう<br>
+
+    </div>
+    <div class="main">
+        <div>
+            <p>
+                音量
+            </p>
+            <p>
+                <input type="range" min="0" max="5" step="0.01" value="0" id="level"  value="1" />
+            </p>
+            <p id="leveldisp">
+                0
+            </p>
+        </div>
+        <div id="holes">
+            <div class="lefts">
+                <div id="left1" class="hole"></div>
+                <div id="left2" class="hole"></div>
+                <div id="left3" class="hole"></div>
+            </div>
+            <div class="rights">
+                <div id="right1" class="hole"></div>
+                <div id="right2" class="hole"></div>
+                <div id="right3" class="hole"></div>
+                <div id="right4" class="hole"></div>
+            </div>           
+        </div>
+        <script>
+
+            const holes = document.getElementById("holes")    
+            const l1 =  document.getElementById("left1")
+            const l2 =  document.getElementById("left2")
+            const l3 =  document.getElementById("left3")
+            const r1 =  document.getElementById("right1")
+            const r2 =  document.getElementById("right2")
+            const r3 =  document.getElementById("right3")
+            const r4 =  document.getElementById("right4")
+
+            let onHole =[];
+
+            let freq = 0;
+            let level= 0;
+
+            holes.addEventListener("touchstart", function(){ updateHolesInfo(event) } )
+            holes.addEventListener("touchend", function(){ updateHolesInfo(event) } )
+            holes.addEventListener("touchmove",function(){ 
+                event.preventDefault()  // 画面スクロールを防止
+                updateHolesPara(event) 
+            } )
+            holes.addEventListener("touchcancel", updateHolesInfo(event))
+
+            // タッチされた指の一覧を作る
+            function updateHolesInfo(event){
+                    onHoles = [];
+                    onHoles.push = getTouchInfo(event.touches);
+                    return onHoles;
+            }
+
+            // 与えられたタッチリストからタッチ情報を取得
+            function getTouchInfo(touchList){
+                let touchedHole;
+                for ( let touch of touchList){
+                    touchedHole = touch.target.id; 
+                }
+                return touchedHole;
+             }
+               
+
+            let osc;
+            let gain;
+            let stoptone = true;
+            
+ 
+            function start(){
+                    if (stoptone == false){
+                        osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
+                        osc.stop(0);							// 音を止める
+                        stoptone = true;
+                        console.log("-----stop-e-----");
+                        return stoptone;
+                        }
+
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;	// for legacy browsers	
+                    let ctx = new AudioContext();
+                    ctx.createGain = ctx.createGain || ctx.createGainNode;
+                    gain = ctx.createGain()
+                    osc = ctx.createOscillator();                
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start = osc.start || osc.noteOn;   
+                    gain.gain.value = level;
+                    osc.frequency.value = freq;
+                    osc.start(0);
+                    stoptone = false;
+
+
+        //
+        // ここから先未改造
+        //
+
+                    if(l1 && l2 && l3 && r1 && r2 && r3 && r4){
+                        freq = 261.626; //ド
+                        }else{
+                    if(l1 && l2 && l3 && r1 && r2 && r3 && r4 == false){
+                        freq = 293.665; //レ    
+                        }else{
+                    if(l1 && l2 && l3 && r1 && r2 && r3 == false && r4 == false){
+                        freq = 329.628; //ミ    
+                        }else{
+                    if(l1 && l2 && l3 && r1 && r2 == false && r3 == false && r4 == false){
+                        freq = 349.228; //ファ    
+                        }else{
+                    if(l1 && l2 && l3 && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 391.995; //ソ    
+                        }else{
+                    if(l1 && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 440.000; //ラ    
+                        }else{
+                    if(l1 && l2 == false  && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 493.883; //シ    
+                        }else{
+                    if(l1 == false  && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
+                        freq = 523.251; //ド
+                        }else{                       
+                            console.log("others");
+                            freq = 0 ;
+                            
+                            if (stoptone == false){
+                                osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
+                                osc.stop(0);							// 音を止める
+                                stoptone = true;
+                                console.log("-----stop-e2-----");
+                                }
+                     
+                    } } } } } } } }
+                
+                    console.log("freqchange"+ freq);
+                    
+                    osc.frequency.value = freq;
+                    console.log("----------------");    
+                    
+                    return [osc, gain, stoptone];
+
+                }   
+
+
+            function updateLevel(newLevel) {
+                level = newLevel;
+                gain.gain.value = level;
+                return;
+            }          
+
+            function setupLevel() {
+                level = parseFloat(document.getElementById("level").value);
+                document.getElementById("leveldisp").innerHTML = level;
+                updateLevel(level);
+                return;
+            }
+
+            document.getElementById("level").addEventListener("input", setupLevel);
+        </script>
+
+    </div>
+    <!--
+<i class="material-icons">play_arrow</i>　
+<span class="material-icons">pause</span>
+
+
+console.log(level)
+-->
+
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <div id="footer"><br><br><br><a href="index.html">戻る</a></div>
+
+
+</body>
+
+</html>

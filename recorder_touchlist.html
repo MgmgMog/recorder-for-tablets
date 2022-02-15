@@ -67,18 +67,22 @@
         <script>
 
             const holes = document.getElementById("holes")    
-            const l1 =  document.getElementById("left1")
-            const l2 =  document.getElementById("left2")
-            const l3 =  document.getElementById("left3")
-            const r1 =  document.getElementById("right1")
-            const r2 =  document.getElementById("right2")
-            const r3 =  document.getElementById("right3")
-            const r4 =  document.getElementById("right4")
+            const left1 =  document.getElementById("left1")
+            const left2 =  document.getElementById("left2")
+            const left3 =  document.getElementById("left3")
+            const right1 =  document.getElementById("right1")
+            const right2 =  document.getElementById("right2")
+            const right3 =  document.getElementById("right3")
+            const right4 =  document.getElementById("right4")
 
             let onHole =[];
 
             let freq = 0;
             let level= 0;
+
+            let osc;
+            let gain;
+            let stoptone = true;
 
             holes.addEventListener("touchstart", function(){ updateHolesInfo(event) } )
             holes.addEventListener("touchend", function(){ updateHolesInfo(event) } )
@@ -86,12 +90,15 @@
                 event.preventDefault()  // 画面スクロールを防止
                 updateHolesPara(event) 
             } )
-            holes.addEventListener("touchcancel", updateHolesInfo(event))
+            holes.addEventListener("touchcancel", function(){ updateHolesInfo(event) } )
 
-            // タッチされた指の一覧を作る
+            // タッチされた指の一覧の配列を作る
             function updateHolesInfo(event){
                     onHoles = [];
                     onHoles.push = getTouchInfo(event.touches);
+                    
+                    function updateTone()
+
                     return onHoles;
             }
 
@@ -100,46 +107,40 @@
                 let touchedHole;
                 for ( let touch of touchList){
                     touchedHole = touch.target.id; 
+                    return touchedHole;
                 }
-                return touchedHole;
-             }
-               
+            }
+                
 
-            let osc;
-            let gain;
-            let stoptone = true;
-            
- 
-            function start(){
-                    if (stoptone == false){
-                        osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
-                        osc.stop(0);							// 音を止める
-                        stoptone = true;
-                        console.log("-----stop-e-----");
-                        return stoptone;
-                        }
-
-                    window.AudioContext = window.AudioContext || window.webkitAudioContext;	// for legacy browsers	
-                    let ctx = new AudioContext();
-                    ctx.createGain = ctx.createGain || ctx.createGainNode;
-                    gain = ctx.createGain()
-                    osc = ctx.createOscillator();                
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-
-                    osc.start = osc.start || osc.noteOn;   
-                    gain.gain.value = level;
-                    osc.frequency.value = freq;
-                    osc.start(0);
-                    stoptone = false;
-
-
-        //
-        // ここから先未改造
-        //
-
+            // 配列を音階に当てはめる
+            function updateTone(){
+                    if (onHoles.includes(left1)) {
+                        var l1 = true;
+                    }
+                    if (onHoles.includes(left2)) {
+                        var l2 = true;
+                    }
+                    if (onHoles.includes(left3)) {
+                        var l3 = true;
+                    }
+                    if (onHoles.includes(right1)) {
+                        var r1 = true;
+                    }
+                    if (onHoles.includes(right2)) {
+                        var r2 = true;
+                    }
+                    if (onHoles.includes(right3)) {
+                        var r3 = true;
+                    }
+                    if (onHoles.includes(right4)) {
+                        var r4 = true;
+                  }
+                   function updateFreq()
+                   }
+              //   
+            function updateFreq(){
                     if(l1 && l2 && l3 && r1 && r2 && r3 && r4){
-                        freq = 261.626; //ド
+                          freq = 261.626; //ド
                         }else{
                     if(l1 && l2 && l3 && r1 && r2 && r3 && r4 == false){
                         freq = 293.665; //レ    
@@ -161,28 +162,56 @@
                         }else{
                     if(l1 == false  && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
                         freq = 523.251; //ド
-                        }else{                       
-                            console.log("others");
-                            freq = 0 ;
-                            
-                            if (stoptone == false){
-                                osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
-                                osc.stop(0);							// 音を止める
-                                stoptone = true;
-                                console.log("-----stop-e2-----");
-                                }
-                     
-                    } } } } } } } }
-                
-                    console.log("freqchange"+ freq);
+                        }else{
+
+                    console.log("others");
+                    freq = 0 ;
+                    function stop()
+                                           
+                                   
+                                } } } } } } } }
+              }
+                console.log("freqchange"+ freq +", stoptone"+ stoptone );
                     
                     osc.frequency.value = freq;
                     console.log("----------------");    
-                    
+            
+
+
+            function start(){
+                    if (stoptone == false){
+                        osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
+                        osc.stop(0);							// 音を止める
+                        stoptone = true;
+                        console.log("-----stop-e-----");
+                        return stoptone;
+                        }
+
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;	// for legacy browsers	
+                    let ctx = new AudioContext();
+                    ctx.createGain = ctx.createGain || ctx.createGainNode;
+                    gain = ctx.createGain()
+                    osc = ctx.createOscillator();                
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start = osc.start || osc.noteOn;   
+                    gain.gain.value = level;
+                    osc.frequency.value = freq;
+                    osc.start(0);
+                    stoptone = false;               
                     return [osc, gain, stoptone];
 
                 }   
-
+            
+            function stop(){
+                if (stoptone == false){
+                        osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
+                        osc.stop(0);							// 音を止める
+                        stoptone = true;
+                        console.log("-----stop-e2-----");
+                        }
+                }    
 
             function updateLevel(newLevel) {
                 level = newLevel;

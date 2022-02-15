@@ -75,6 +75,14 @@
             const right3 =  document.getElementById("right3")
             const right4 =  document.getElementById("right4")
 
+            var l1 = false;
+            var l2 = false;
+            var l3 = false;
+            var r1 = false;
+            var r2 = false;
+            var r3 = false;
+            var r4 = false;
+
             let onHole =[];
 
             let freq = 0;
@@ -96,9 +104,9 @@
             function updateHolesInfo(event){
                     onHoles = [];
                     onHoles.push = getTouchInfo(event.touches);
-                    
-                    function updateTone()
-
+                    console.log("event.touches ="+event.touches);
+                    console.log("onHoles[] ="+onHoles);
+                    updateTone();
                     return onHoles;
             }
 
@@ -107,58 +115,61 @@
                 let touchedHole;
                 for ( let touch of touchList){
                     touchedHole = touch.target.id; 
-                    return touchedHole;
+                start();
                 }
+                return touchedHole;             
             }
                 
 
             // 配列を音階に当てはめる
             function updateTone(){
+                console.log("--updateTone--")
                     if (onHoles.includes(left1)) {
-                        var l1 = true;
+                        l1 = true;
                     }
                     if (onHoles.includes(left2)) {
-                        var l2 = true;
+                        l2 = true;
                     }
                     if (onHoles.includes(left3)) {
-                        var l3 = true;
+                        l3 = true;
                     }
                     if (onHoles.includes(right1)) {
-                        var r1 = true;
+                        r1 = true;
                     }
                     if (onHoles.includes(right2)) {
-                        var r2 = true;
+                        r2 = true;
                     }
                     if (onHoles.includes(right3)) {
-                        var r3 = true;
+                        r3 = true;
                     }
                     if (onHoles.includes(right4)) {
-                        var r4 = true;
+                        r4 = true;
                   }
-                   function updateFreq()
+                   updateFreq();
+                   return [l1, l2, l3, r1, r2, r3,r4];
                    }
               //   
             function updateFreq(){
                     if(l1 && l2 && l3 && r1 && r2 && r3 && r4){
-                          freq = 261.626; //ド
+                          freq = 261.626; //ド                        
                         }else{
                     if(l1 && l2 && l3 && r1 && r2 && r3 && r4 == false){
-                        freq = 293.665; //レ    
+                        freq = 293.665; //レ
                         }else{
                     if(l1 && l2 && l3 && r1 && r2 && r3 == false && r4 == false){
-                        freq = 329.628; //ミ    
+                        freq = 329.628; //ミ
                         }else{
                     if(l1 && l2 && l3 && r1 && r2 == false && r3 == false && r4 == false){
-                        freq = 349.228; //ファ    
+                        freq = 349.228; //ファ
                         }else{
                     if(l1 && l2 && l3 && r1 == false && r2 == false && r3 == false && r4 == false){
-                        freq = 391.995; //ソ    
+                        freq = 391.995; //ソ
                         }else{
                     if(l1 && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
-                        freq = 440.000; //ラ    
+                        freq = 440.000; //ラ
                         }else{
                     if(l1 && l2 == false  && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
-                        freq = 493.883; //シ    
+                        freq = 493.883; //シ
                         }else{
                     if(l1 == false  && l2 && l3 == false && r1 == false && r2 == false && r3 == false && r4 == false){
                         freq = 523.251; //ド
@@ -166,14 +177,14 @@
 
                     console.log("others");
                     freq = 0 ;
-                    function stop()
+                    stop();
                                            
                                    
-                                } } } } } } } }
+                    }} } } } } } }
               }
-                console.log("freqchange"+ freq +", stoptone"+ stoptone );
+                console.log("freqchange:"+ freq +", stoptone:"+ stoptone );
                     
-                    osc.frequency.value = freq;
+                //    osc.frequency.value = freq;
                     console.log("----------------");    
             
 
@@ -190,7 +201,7 @@
                     window.AudioContext = window.AudioContext || window.webkitAudioContext;	// for legacy browsers	
                     let ctx = new AudioContext();
                     ctx.createGain = ctx.createGain || ctx.createGainNode;
-                    gain = ctx.createGain()
+                    gain = ctx.createGain();
                     osc = ctx.createOscillator();                
                     osc.connect(gain);
                     gain.connect(ctx.destination);
@@ -199,7 +210,10 @@
                     gain.gain.value = level;
                     osc.frequency.value = freq;
                     osc.start(0);
-                    stoptone = false;               
+                    stoptone = false; 
+                    console.log("-----start-e-----");
+                    console.log(freq); 
+                    console.log("l1:"+ l1,",l2:"+ l2,",l3:"+ l3,",r1:"+  r1,",r2:"+ r2,",r3:"+  r3,",r4:"+  r4);           
                     return [osc, gain, stoptone];
 
                 }   

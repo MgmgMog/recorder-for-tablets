@@ -103,19 +103,19 @@
             // タッチされた指の一覧の配列を作る
             function updateHolesInfo(event){
                     onHoles = [];
-                    onHoles.push = getTouchInfo(event.touches);
-                    console.log("event.touches ="+event.touches);
-                    console.log("onHoles[] ="+onHoles);
+                    onHoles = getTouchInfo(event.touches);
+                    console.log("event.touches =",event.touches);
+                    console.log("onHoles[] =", onHoles);
                     updateTone();
+                    start();
                     return onHoles;
             }
 
             // 与えられたタッチリストからタッチ情報を取得
             function getTouchInfo(touchList){
-                let touchedHole;
+                let touchedHole = [];
                 for ( let touch of touchList){
-                    touchedHole = touch.target.id; 
-                start();
+                    touchedHole.push(touch.target.id); 
                 }
                 return touchedHole;             
             }
@@ -123,29 +123,16 @@
 
             // 配列を音階に当てはめる
             function updateTone(){
-                console.log("--updateTone--")
-                    if (onHoles.includes(left1)) {
-                        l1 = true;
-                    }
-                    if (onHoles.includes(left2)) {
-                        l2 = true;
-                    }
-                    if (onHoles.includes(left3)) {
-                        l3 = true;
-                    }
-                    if (onHoles.includes(right1)) {
-                        r1 = true;
-                    }
-                    if (onHoles.includes(right2)) {
-                        r2 = true;
-                    }
-                    if (onHoles.includes(right3)) {
-                        r3 = true;
-                    }
-                    if (onHoles.includes(right4)) {
-                        r4 = true;
-                  }
-                   updateFreq();
+                console.log("--updateTone--");
+                    l1 = onHoles.includes("left1");
+                    l2 = onHoles.includes("left2");
+                    l3 = onHoles.includes("left3");
+                    r1 = onHoles.includes("right1");
+                    r2 = onHoles.includes("right2");
+                    r3 = onHoles.includes("right3");
+                    r4 = onHoles.includes("right4");
+                                        
+                    updateFreq();
                    return [l1, l2, l3, r1, r2, r3,r4];
                    }
               //   
@@ -185,7 +172,7 @@
                 console.log("freqchange:"+ freq +", stoptone:"+ stoptone );
                     
                 //    osc.frequency.value = freq;
-                    console.log("----------------");    
+                   
             
 
 
@@ -212,8 +199,8 @@
                     osc.start(0);
                     stoptone = false; 
                     console.log("-----start-e-----");
-                    console.log(freq); 
                     console.log("l1:"+ l1,",l2:"+ l2,",l3:"+ l3,",r1:"+  r1,",r2:"+ r2,",r3:"+  r3,",r4:"+  r4);           
+                    console.log("freq =",freq); 
                     return [osc, gain, stoptone];
 
                 }   
@@ -223,8 +210,9 @@
                         osc.stop = osc.stop || osc.noteOff;		// for legacy browsers
                         osc.stop(0);							// 音を止める
                         stoptone = true;
-                        console.log("-----stop-e2-----");
                         }
+                console.log("-----stop-e2-----");
+                            
                 }    
 
             function updateLevel(newLevel) {

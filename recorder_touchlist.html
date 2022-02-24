@@ -9,21 +9,27 @@
     <style type="text/css">
 
         .hole{
+            display: inline-block;
             border-radius: 50%;
             width: 30px;
             height: 30px;
             background-color: #000000;
             border: #888888 solid 3px;
-            font-size: 36px; 
-            
+            font-size: 36px;             
         }
 
         .rights{
+            display: inline;
             text-align: left;
         }
 
         .lefts{
+            display: inline;
             float: right;
+        }
+
+        .inner{
+            margin-left: 10px;
         }
        
         body {
@@ -57,7 +63,7 @@
         </div>
         <div id="holes">
             <div class="lefts">
-                （左手）
+                <div>（左手）</div>
                 <div id="left1" class="hole"></div>
                 <br>
                 <div id="left2" class="hole"></div>
@@ -65,12 +71,12 @@
                 <div id="left3" class="hole"></div>
             </div>
             <div class="rights">
-                （右手）
-                <div id="right1" class="hole"></div>
+                <div>（右手）</div>                
+                <div id="right1" class="hole inner"></div>
                 <br>
-                <div id="right2" class="hole"></div>
+                <div id="right2" class="hole inner"></div>
                 <br>
-                <div id="right3" class="hole"></div>
+                <div id="right3" class="hole inner"></div>
                 <br>
                 <div id="right4" class="hole"></div>
             </div>           
